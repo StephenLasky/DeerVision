@@ -1,2 +1,5 @@
 GENERAL_INPUT_PATH = "/Users/stephenlasky/Desktop/repos/deer-vision/input/caddo/"
 TEST_PATH_IMG_PATH = "/Users/stephenlasky/Desktop/repos/deer-vision/images/HeathJoker.png"
+
+FULL_IMAGE_HEIGHT = 1080
+FULL_IMAGE_WIDTH = 1920
