@@ -2,3 +2,6 @@ env
 input
 .DS_Store
 test.py
+tkint-test.py
+images
+__pycache__/
