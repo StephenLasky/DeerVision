@@ -20,8 +20,13 @@ class ManualLabeler:
         self.next_btn = Button(window, text="Next", command=self.next_btn_press)
         self.next_btn.grid(row=1, column=1)
 
-        # set image
+        # set initial image
         self.set_image(dispenser.dispense())
+
+        # bound mouse movement to the canvas
+        self.canvas.bind("<ButtonPress-1>", self.canvas_press)
+        self.canvas.bind("<B1-Motion>", self.canvas_press_move)
+        self.canvas.bind("<ButtonRelease-1>", self.canvas_press_release)
 
         window.mainloop()
 
@@ -37,3 +42,12 @@ class ManualLabeler:
     def prev_btn_press(self):
         self.dispenser.prev()
         self.set_image(self.dispenser.dispense())
+
+    def canvas_press(self, event):
+        print("Click event at coordinates {}, {}".format(event.x, event.y))
+
+    def canvas_press_move(self, event):
+        print("Move event at coordinates {}, {}".format(event.x, event.y))
+
+    def canvas_press_release(self, event):
+        print("Release event at coordinates {}, {}".format(event.x, event.y))

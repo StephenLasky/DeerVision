@@ -1,5 +1,6 @@
 from common import get_files_in_folder, num_frames, get_frame
 import cv2
+from random import shuffle
 
 class ImageDispenser:
     def __init__(self, input_folder):
@@ -26,6 +27,7 @@ class ImageDispenser:
                 self.index_to_vid_frame.append((i, j))    # (video number, frame number)
 
         self.sequence = list(range(len(self.index_to_vid_frame)))
+        shuffle(self.sequence)
         self.current_frame = 0
 
     def dispense(self):
