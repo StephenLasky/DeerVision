@@ -27,6 +27,8 @@ class ManualLabeler:
         self.canvas.bind("<ButtonPress-1>", self.canvas_press)
         self.canvas.bind("<B1-Motion>", self.canvas_press_move)
         self.canvas.bind("<ButtonRelease-1>", self.canvas_press_release)
+        self.selection_rect = None
+        self.startx, self.starty = None, None
 
         window.mainloop()
 
@@ -46,8 +48,13 @@ class ManualLabeler:
     def canvas_press(self, event):
         print("Click event at coordinates {}, {}".format(event.x, event.y))
 
+        self.selection_rect = self.canvas.create_rectangle(event.x, event.y, event.x, event.y, fill="", outline='yellow')
+        self.startx, self.starty = event.x, event.y
+
     def canvas_press_move(self, event):
         print("Move event at coordinates {}, {}".format(event.x, event.y))
+
+        self.canvas.coords(self.selection_rect, self.startx, self.starty, event.x, event.y)
 
     def canvas_press_release(self, event):
         print("Release event at coordinates {}, {}".format(event.x, event.y))
