@@ -1,5 +1,7 @@
-GENERAL_INPUT_PATH = "/Users/stephenlasky/Desktop/repos/deer-vision/input/caddo/"
+GENERAL_INPUT_PATH = "input/caddo/"
 TEST_PATH_IMG_PATH = "/Users/stephenlasky/Desktop/repos/deer-vision/images/HeathJoker.png"
+
+TEST_DB_NAME = "test.db"
 
 FULL_IMAGE_HEIGHT = 1080
 FULL_IMAGE_WIDTH = 1920
@@ -24,6 +26,13 @@ SQUIRREL = "SQ"
 PIG = "PG"
 UNLABLED = "UL"
 
+NUM_DEER = 0
+NUM_COYOTE = 1
+NUM_MAN = 2
+NUM_SQUIRREL = 3
+NUM_PIG = 4
+NUM_UNLABELED = 5
+
 SELECTED_BB_COLOR = "yellow"
 UNSELECTED_BB_COLOR = "#FFCA0D"
 
@@ -33,3 +42,9 @@ TEXT_MAN = "MAN"
 TEXT_SQUIRREL = "SQUIRREL"
 TEXT_PIG = "PIG"
 TEXT_UNLABELED = "Unlabeled"
+
+LOCATION_CADDO = 0
+
+LOCATION_TO_INT = {
+    "caddo" : LOCATION_CADDO
+}

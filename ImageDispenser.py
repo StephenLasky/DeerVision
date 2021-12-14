@@ -1,6 +1,7 @@
 from common import get_files_in_folder, num_frames, get_frame
 import cv2
 from random import shuffle
+from enums import *
 
 class ImageDispenser:
     def __init__(self, input_folder):
@@ -28,28 +29,41 @@ class ImageDispenser:
 
         self.sequence = list(range(len(self.index_to_vid_frame)))
         shuffle(self.sequence)
-        self.current_frame = 0
+        self.current_index = 0
 
     def dispense(self):
-        frame_num = self.sequence[self.current_frame]
+        frame_index = self.sequence[self.current_index]
 
         print("Dispensing index:{} -> vid:{} frame:{} path:{}".format(
-            frame_num,
-            self.index_to_vid_frame[frame_num][0],
-            self.index_to_vid_frame[frame_num][1],
-            self.file_paths[self.index_to_vid_frame[frame_num][0]]
+            frame_index,
+            self.index_to_vid_frame[frame_index][0],
+            self.index_to_vid_frame[frame_index][1],
+            self.file_paths[self.index_to_vid_frame[frame_index][0]]
         ))
 
-        frame = self.get_frame(frame_num)
+        frame = self.get_frame(frame_index)
         frame = cv2.resize(frame, None, fx=0.5, fy=0.5)
 
         return frame
 
+    def frame_info(self):
+        frame_index = self.sequence[self.current_index]
+        frame = self.index_to_vid_frame[frame_index][1]
+        path = self.file_paths[self.index_to_vid_frame[frame_index][0]]
+
+        _, location, date, cam, vid = path.split("/")
+
+        location = LOCATION_TO_INT[location]
+        cam = int(cam.split("_")[-1])
+        vid = int(vid[4:].split(".")[0])
+
+        return location, date, cam, vid, frame
+
     def next(self):
-        self.current_frame = min(self.current_frame + 1, len(self.sequence) - 1)
+        self.current_index = min(self.current_index + 1, len(self.sequence) - 1)
 
     def prev(self):
-        self.current_frame = max(self.current_frame - 1, 0)
+        self.current_index = max(self.current_index - 1, 0)
 
     def get_frame(self, index):
         vid, frame = self.index_to_vid_frame[index]     # convert index to a video # and frame #
