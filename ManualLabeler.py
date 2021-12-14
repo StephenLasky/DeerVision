@@ -89,7 +89,13 @@ class ManualLabeler:
 
         return (None, None)
 
+    def reset_rectangles(self):
+        for i in range(len(self.rects)):
+            self.canvas.itemconfig(self.rects[i][0], outline=UNSELECTED_BB_COLOR)
+
     def canvas_press(self, event):
+        self.reset_rectangles()
+
         print("Click event at coordinates {}, {}".format(event.x, event.y))
 
         nearest_rect_id, side = self.find_nearest_rectangle(event.x, event.y)
@@ -99,7 +105,7 @@ class ManualLabeler:
         if nearest_rect_id == None:
             self.drag_mode = DRAG_MODE_CREATE_RECT
 
-            self.selection_rect = self.canvas.create_rectangle(event.x, event.y, event.x, event.y, fill="", outline='yellow')
+            self.selection_rect = self.canvas.create_rectangle(event.x, event.y, event.x, event.y, fill="", outline=SELECTED_BB_COLOR)
             self.startx, self.starty = event.x, event.y
             self.rects.append([self.selection_rect, event.x, event.y, event.x, event.y])
             self.rect_id = len(self.rects) - 1
@@ -108,6 +114,8 @@ class ManualLabeler:
 
             self.rect_id = nearest_rect_id
             self.drag_side = side
+
+            self.canvas.itemconfig(self.rects[self.rect_id][0], outline=SELECTED_BB_COLOR)
 
     def canvas_press_move(self, event):
         selection_rect, startx, starty, endx, endy = self.rects[self.rect_id]

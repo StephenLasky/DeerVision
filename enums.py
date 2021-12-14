@@ -11,3 +11,13 @@ LEFT = 3
 
 DRAG_MODE_CREATE_RECT = 0
 DRAG_MODE_MODIFY_RECT = 1
+
+# Classifications
+DEER = "DR"
+COYOTE = "CY"
+MAN = "MN"
+SQUIRREL = "SQ"
+PIG = "PG"
+
+SELECTED_BB_COLOR = "yellow"
+UNSELECTED_BB_COLOR = "blue"
