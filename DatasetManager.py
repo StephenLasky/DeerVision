@@ -38,6 +38,10 @@ class DatasetManager:
         self.conn.execute(sql)
         self.conn.commit()
 
+        print("Added record: l={} d={} c={} v={} f={} cls={} x1={} y1={} x2={} y2={}".format(
+            location, import_dt, cam, vid, frame, c, start_x, start_y, end_x, end_y)
+        )
+
     def create_connection(self, db_file):
         """ create a database connection to the SQLite database
             specified by db_file

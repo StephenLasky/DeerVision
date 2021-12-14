@@ -156,18 +156,38 @@ class ManualLabeler:
             location, date, cam, vid, frame, NUM_DEER, start_x, start_y, end_x, end_y
         )
 
-        print("Added record: l={} d={} c={} v={} f={} cls={} x1={} y1={} x2={} y2={}".format(
-            location, date, cam, vid, frame, NUM_DEER, start_x, start_y, end_x, end_y)
-        )
-
     def pig_btn_press(self):
         self.rects[self.rect_id].label(TEXT_PIG)
+        location, date, cam, vid, frame = self.dispenser.frame_info()
+        start_x, start_y, end_x, end_y = self.rects[self.rect_id].get_coords()
+
+        self.dataset_manager.create_label(
+            location, date, cam, vid, frame, NUM_PIG, start_x, start_y, end_x, end_y
+        )
 
     def man_btn_press(self):
         self.rects[self.rect_id].label(TEXT_MAN)
+        location, date, cam, vid, frame = self.dispenser.frame_info()
+        start_x, start_y, end_x, end_y = self.rects[self.rect_id].get_coords()
+
+        self.dataset_manager.create_label(
+            location, date, cam, vid, frame, NUM_MAN, start_x, start_y, end_x, end_y
+        )
 
     def coyote_btn_press(self):
         self.rects[self.rect_id].label(TEXT_COYOTE)
+        location, date, cam, vid, frame = self.dispenser.frame_info()
+        start_x, start_y, end_x, end_y = self.rects[self.rect_id].get_coords()
+
+        self.dataset_manager.create_label(
+            location, date, cam, vid, frame, NUM_COYOTE, start_x, start_y, end_x, end_y
+        )
 
     def squirrel_btn_press(self):
         self.rects[self.rect_id].label(TEXT_SQUIRREL)
+        location, date, cam, vid, frame = self.dispenser.frame_info()
+        start_x, start_y, end_x, end_y = self.rects[self.rect_id].get_coords()
+
+        self.dataset_manager.create_label(
+            location, date, cam, vid, frame, NUM_SQUIRREL, start_x, start_y, end_x, end_y
+        )
