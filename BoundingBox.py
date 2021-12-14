@@ -11,7 +11,7 @@ class BoundingBox:
 
     def create(self):
         rect = self.canvas.create_rectangle(self.startx, self.starty, self.endx, self.endy, outline=SELECTED_BB_COLOR)
-        text = self.canvas.create_text(self.startx, self.starty, fill="black", text="Sample Text", anchor="nw")
+        text = self.canvas.create_text(self.startx, self.starty, fill="black", text=TEXT_UNLABELED, anchor="nw")
 
         startx, starty, endx, endy = self.canvas.bbox(text)
         textbg = self.canvas.create_rectangle(startx, starty, endx, endy, outline="", fill=SELECTED_BB_COLOR)
@@ -47,3 +47,9 @@ class BoundingBox:
 
     def get_coords(self):
         return self.startx, self.starty, self.endx, self.endy
+
+    def label(self, text):
+        self.canvas.itemconfig(self.text, text=text)
+
+        startx, starty, endx, endy = self.canvas.bbox(self.text)
+        self.canvas.coords(self.textbg, startx, starty, endx, endy)

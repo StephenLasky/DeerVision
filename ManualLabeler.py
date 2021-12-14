@@ -22,11 +22,11 @@ class ManualLabeler:
         self.next_btn.grid(row=1, column=4)
 
         # set up classify buttons
-        self.deer_btn = Button(window, text="Deer")
-        self.pig_btn = Button(window, text="Pig")
-        self.man_btn = Button(window, text="Man")
-        self.coyote_btn = Button(window, text="Coyote")
-        self.squirrel_btn = Button(window, text="Squirrel")
+        self.deer_btn = Button(window, text="Deer", command=self.deer_btn_press)
+        self.pig_btn = Button(window, text="Pig", command=self.pig_btn_press)
+        self.man_btn = Button(window, text="Man", command=self.man_btn_press)
+        self.coyote_btn = Button(window, text="Coyote", command=self.coyote_btn_press)
+        self.squirrel_btn = Button(window, text="Squirrel", command=self.squirrel_btn_press)
 
         self.deer_btn.grid(row=2, column=0)
         self.pig_btn.grid(row=2, column=1)
@@ -132,4 +132,18 @@ class ManualLabeler:
         print("Release event at coordinates {}, {}".format(event.x, event.y))
 
         self.canvas_press_move(event)
-        self.rect_id = None
+
+    def deer_btn_press(self):
+        self.rects[self.rect_id].label(TEXT_DEER)
+
+    def pig_btn_press(self):
+        self.rects[self.rect_id].label(TEXT_PIG)
+
+    def man_btn_press(self):
+        self.rects[self.rect_id].label(TEXT_MAN)
+
+    def coyote_btn_press(self):
+        self.rects[self.rect_id].label(TEXT_COYOTE)
+
+    def squirrel_btn_press(self):
+        self.rects[self.rect_id].label(TEXT_SQUIRREL)
