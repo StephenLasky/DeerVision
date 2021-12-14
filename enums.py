@@ -3,3 +3,11 @@ TEST_PATH_IMG_PATH = "/Users/stephenlasky/Desktop/repos/deer-vision/images/Heath
 
 FULL_IMAGE_HEIGHT = 1080
 FULL_IMAGE_WIDTH = 1920
+
+TOP = 0
+RIGHT = 1
+BOTTOM = 2
+LEFT = 3
+
+DRAG_MODE_CREATE_RECT = 0
+DRAG_MODE_MODIFY_RECT = 1

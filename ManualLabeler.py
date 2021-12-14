@@ -42,6 +42,10 @@ class ManualLabeler:
         self.canvas.bind("<ButtonRelease-1>", self.canvas_press_release)
         self.selection_rect = None
         self.startx, self.starty = None, None
+        self.rects = []                                 # (rect num, start x, start y, end x, end y )
+        self.rect_id = None
+        self.drag_mode = None
+        self.drag_side = None
 
         window.mainloop()
 
@@ -58,16 +62,70 @@ class ManualLabeler:
         self.dispenser.prev()
         self.set_image(self.dispenser.dispense())
 
+    def between(self, X, a, b):
+        lo = min(a,b)
+        hi = max(a,b)
+
+        if lo <= X and X <= hi: return True
+        else: return False
+
+    def find_nearest_rectangle(self, x, y):
+        """
+        Given an x/y coordinate pair - find the nearest rectangle in the current frame.
+        :param x: x coordinate
+        :param y: y coordinate
+        :return: (rectangle_id, SIDE)
+        """
+
+        selection_width = 25
+
+        for i in range(len(self.rects)):
+            selection_rect, startx, starty, endx, endy = self.rects[i]
+
+            if abs(startx - x) < selection_width and self.between(y, starty, endy): return (i, LEFT)
+            elif abs(endx - x) < selection_width and self.between(y, starty, endy): return (i, RIGHT)
+            elif abs(starty - y) < selection_width and self.between(x, startx, endx): return (i, TOP)
+            elif abs(endy - y) < selection_width and self.between(x, startx, endx): return (i, BOTTOM)
+
+        return (None, None)
+
     def canvas_press(self, event):
         print("Click event at coordinates {}, {}".format(event.x, event.y))
 
-        self.selection_rect = self.canvas.create_rectangle(event.x, event.y, event.x, event.y, fill="", outline='yellow')
-        self.startx, self.starty = event.x, event.y
+        nearest_rect_id, side = self.find_nearest_rectangle(event.x, event.y)
+        print("Found neighbor {}".format(nearest_rect_id))
+
+        # Case 1: No rectangle found, create new one
+        if nearest_rect_id == None:
+            self.drag_mode = DRAG_MODE_CREATE_RECT
+
+            self.selection_rect = self.canvas.create_rectangle(event.x, event.y, event.x, event.y, fill="", outline='yellow')
+            self.startx, self.starty = event.x, event.y
+            self.rects.append([self.selection_rect, event.x, event.y, event.x, event.y])
+            self.rect_id = len(self.rects) - 1
+        else:
+            self.drag_mode = DRAG_MODE_MODIFY_RECT
+
+            self.rect_id = nearest_rect_id
+            self.drag_side = side
 
     def canvas_press_move(self, event):
-        print("Move event at coordinates {}, {}".format(event.x, event.y))
+        selection_rect, startx, starty, endx, endy = self.rects[self.rect_id]
 
-        self.canvas.coords(self.selection_rect, self.startx, self.starty, event.x, event.y)
+        if self.drag_mode == DRAG_MODE_CREATE_RECT:
+            endx, endy = event.x, event.y
+        elif self.drag_mode == DRAG_MODE_MODIFY_RECT:
+            if self.drag_side == TOP: starty = event.y
+            elif self.drag_side == BOTTOM: endy = event.y
+            elif self.drag_side == LEFT: startx = event.x
+            elif self.drag_side == RIGHT: endx = event.x
+
+        self.rects[self.rect_id] = [selection_rect, startx, starty, endx, endy]
+        self.canvas.coords(selection_rect, startx, starty, endx, endy)
 
     def canvas_press_release(self, event):
+        print("Selection rect : {}".format(self.selection_rect))
         print("Release event at coordinates {}, {}".format(event.x, event.y))
+
+        self.canvas_press_move(event)
+        self.rect_id = None
