@@ -14,7 +14,7 @@ class BoundingBox:
         text = self.canvas.create_text(self.startx, self.starty, fill="black", text="Sample Text", anchor="nw")
 
         startx, starty, endx, endy = self.canvas.bbox(text)
-        textbg = self.canvas.create_rectangle(startx, starty, endx, endy, outline=SELECTED_BB_COLOR, fill=SELECTED_BB_COLOR)
+        textbg = self.canvas.create_rectangle(startx, starty, endx, endy, outline="", fill=SELECTED_BB_COLOR)
 
         self.canvas.lift(text)
 
@@ -22,8 +22,10 @@ class BoundingBox:
 
     def select(self):
         self.canvas.itemconfig(self.rect, outline=SELECTED_BB_COLOR)
+        self.canvas.itemconfig(self.textbg, fill=SELECTED_BB_COLOR)
     def unselect(self):
         self.canvas.itemconfig(self.rect, outline=UNSELECTED_BB_COLOR)
+        self.canvas.itemconfig(self.textbg, fill=UNSELECTED_BB_COLOR)
 
     def update(self, startx=None, starty=None, endx=None, endy=None):
         if startx is not None: delta_x = startx - self.startx
@@ -41,7 +43,7 @@ class BoundingBox:
         self.canvas.coords(self.text, self.startx, self.starty)
 
         x1, y1, x2, y2 = self.canvas.bbox(self.textbg)
-        self.canvas.coords(self.textbg, x1 + delta_x + 1, y1 + delta_y + 1, x2 + delta_x - 1, y2 + delta_y - 1)
+        self.canvas.coords(self.textbg, x1 + delta_x, y1 + delta_y , x2 + delta_x, y2 + delta_y)
 
     def get_coords(self):
         return self.startx, self.starty, self.endx, self.endy

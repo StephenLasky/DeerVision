@@ -90,11 +90,10 @@ class ManualLabeler:
         return (None, None)
 
     def reset_rectangles(self):
-        for i in range(len(self.rects)):
-            self.canvas.itemconfig(self.rects[i][0], outline=UNSELECTED_BB_COLOR)
+        for i in range(len(self.rects)): self.rects[i].unselect()
 
     def canvas_press(self, event):
-        # self.reset_rectangles()
+        self.reset_rectangles()
 
         print("Click event at coordinates {}, {}".format(event.x, event.y))
 
