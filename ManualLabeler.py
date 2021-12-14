@@ -12,13 +12,26 @@ class ManualLabeler:
 
         # set up main canvas
         self.canvas = Canvas(window, height=1080/2, width=1920/2)
-        self.canvas.grid(row=0, column=0, columnspan=2)
+        self.canvas.grid(row=0, column=0, columnspan=5)
 
         # set up buttons
         self.prev_btn = Button(window, text="Prev", command=self.prev_btn_press)
         self.prev_btn.grid(row=1, column=0)
         self.next_btn = Button(window, text="Next", command=self.next_btn_press)
-        self.next_btn.grid(row=1, column=1)
+        self.next_btn.grid(row=1, column=4)
+
+        # set up classify buttons
+        self.deer_btn = Button(window, text="Deer")
+        self.pig_btn = Button(window, text="Pig")
+        self.man_btn = Button(window, text="Man")
+        self.coyote_btn = Button(window, text="Coyote")
+        self.squirrel_btn = Button(window, text="Squirrel")
+
+        self.deer_btn.grid(row=2, column=0)
+        self.pig_btn.grid(row=2, column=1)
+        self.man_btn.grid(row=2, column=2)
+        self.coyote_btn.grid(row=2, column=3)
+        self.squirrel_btn.grid(row=2, column=4)
 
         # set initial image
         self.set_image(dispenser.dispense())
