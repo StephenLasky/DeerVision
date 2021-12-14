@@ -2,10 +2,12 @@ from tkinter import *
 from enums import *
 from PIL import Image, ImageTk
 from BoundingBox import BoundingBox
+from DatasetManager import DatasetManager
 
 class ManualLabeler:
     def __init__(self, dispenser):
         self.dispenser = dispenser
+        self.dataset_manager = DatasetManager(TEST_DB_NAME)
 
         window = Tk()
         window.title("Main window")
@@ -147,6 +149,16 @@ class ManualLabeler:
 
     def deer_btn_press(self):
         self.rects[self.rect_id].label(TEXT_DEER)
+        location, date, cam, vid, frame = self.dispenser.frame_info()
+        start_x, start_y, end_x, end_y = self.rects[self.rect_id].get_coords()
+
+        self.dataset_manager.create_label(
+            location, date, cam, vid, frame, NUM_DEER, start_x, start_y, end_x, end_y
+        )
+
+        print("Added record: l={} d={} c={} v={} f={} cls={} x1={} y1={} x2={} y2={}".format(
+            location, date, cam, vid, frame, NUM_DEER, start_x, start_y, end_x, end_y)
+        )
 
     def pig_btn_press(self):
         self.rects[self.rect_id].label(TEXT_PIG)

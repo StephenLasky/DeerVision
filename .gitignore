@@ -1,3 +1,7 @@
+*.db
+.idea
+identifier.sqlite
+sqlite_test.py
 env
 input
 .DS_Store
