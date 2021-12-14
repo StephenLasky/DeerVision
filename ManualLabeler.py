@@ -82,6 +82,11 @@ class ManualLabeler:
         for i in range(len(self.rects)):
             startx, starty, endx, endy = self.rects[i].get_coords()
 
+            if abs(startx - x) < selection_width and abs(starty - y) < selection_width: return (i, TOP_LEFT)
+            elif abs(startx - x) < selection_width and abs(endy - y) < selection_width: return (i, BOT_LEFT)
+            elif abs(endx - x) < selection_width and abs(starty - y) < selection_width: return (i, TOP_RIGHT)
+            elif abs(endx - x) < selection_width and abs(endy - y) < selection_width: return (i, BOT_RIGHT)
+
             if abs(startx - x) < selection_width and self.between(y, starty, endy): return (i, LEFT)
             elif abs(endx - x) < selection_width and self.between(y, starty, endy): return (i, RIGHT)
             elif abs(starty - y) < selection_width and self.between(x, startx, endx): return (i, TOP)
@@ -121,7 +126,14 @@ class ManualLabeler:
         if self.drag_mode == DRAG_MODE_CREATE_RECT:
             endx, endy = event.x, event.y
         elif self.drag_mode == DRAG_MODE_MODIFY_RECT:
-            if self.drag_side == TOP: starty = event.y
+            # Corner dragging - takes priority
+            if self.drag_side == TOP_LEFT: startx, starty = event.x, event.y
+            elif self.drag_side == TOP_RIGHT: endx, starty = event.x, event.y
+            elif self.drag_side == BOT_RIGHT: endx, endy = event.x, event.y
+            elif self.drag_side == BOT_LEFT: startx, endy = event.x, event.y
+
+            # Side dragging
+            elif self.drag_side == TOP: starty = event.y
             elif self.drag_side == BOTTOM: endy = event.y
             elif self.drag_side == LEFT: startx = event.x
             elif self.drag_side == RIGHT: endx = event.x
