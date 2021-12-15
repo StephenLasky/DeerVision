@@ -42,6 +42,14 @@ class DatasetManager:
             location, import_dt, cam, vid, frame, c, start_x, start_y, end_x, end_y)
         )
 
+    def retrieve_labels(self, location, import_dt, cam, vid, frame):
+        sql = """select class, start_x, start_y, end_x, end_y from labels 
+        where location={} and import_dt='{}' and cam={} and vid={} and frame={}""".format(
+            location, import_dt, cam, vid, frame
+        )
+
+        return self.conn.execute(sql).fetchall()
+
     def create_connection(self, db_file):
         """ create a database connection to the SQLite database
             specified by db_file
@@ -71,6 +79,7 @@ class DatasetManager:
 
     def create_object_label_table(self, conn):
         sql = """CREATE TABLE IF NOT EXISTS labels (
+        id integer primary key,
         location integer,
         import_dt text,
         cam integer,

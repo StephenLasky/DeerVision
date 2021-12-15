@@ -38,6 +38,7 @@ class ManualLabeler:
 
         # set initial image
         self.set_image(dispenser.dispense())
+        self.load_frame()
 
         # bound mouse movement to the canvas
         self.canvas.bind("<ButtonPress-1>", self.canvas_press)
@@ -56,13 +57,32 @@ class ManualLabeler:
         self.canvas.create_image(0,0, anchor=NW, image=bg)
         self.canvas.image = bg
 
+    def load_frame(self):
+        # build the new frame
+        location, date, cam, vid, frame = self.dispenser.frame_info()
+        self.rects = []         # todo: delete them literally instead of passively "forgetting"
+        self.rect_id = None
+        raw_label_data = self.dataset_manager.retrieve_labels(location, date, cam, vid, frame)  # pull raw SQL data
+
+        # go through every row of saved data - turned them into bounding boxes.
+        for row in raw_label_data:
+            num_class, start_x, start_y, end_x, end_y = row
+            self.rects.append(BoundingBox(self.canvas, start_x, start_y, end_x, end_y))
+            self.rect_id = len(self.rects) - 1
+            self.rects[self.rect_id].label(CLASS_NUM_TO_TEXT[num_class])
+            self.rects[self.rect_id].unselect()
+
+        if len(self.rects) > 0: self.rects[0].select()    # ensure *something* is selected
+
     def next_btn_press(self):
         self.dispenser.next()
         self.set_image(self.dispenser.dispense())
+        self.load_frame()
 
     def prev_btn_press(self):
         self.dispenser.prev()
         self.set_image(self.dispenser.dispense())
+        self.load_frame()
 
     def between(self, X, a, b):
         lo = min(a,b)
