@@ -31,17 +31,34 @@ class DatasetManager:
         :return: N/a
         """
 
-        sql = """insert into labels (location, import_dt, cam, vid, frame, class, start_x, start_y, end_x, end_y) 
-                values ({}, '{}', {}, {}, {}, {}, {}, {}, {}, {});""".format(
-            location, import_dt, cam, vid, frame, c, start_x, start_y, end_x, end_y
+        # Check to see if this record exists already
+        sql = """select id from labels where location={} and import_dt='{}' and cam={} and vid={}
+                and frame={} and start_x={} and start_y={} and end_x={} and end_y={}""".format(
+            location, import_dt, cam, vid, frame, start_x, start_y, end_x, end_y
         )
+        existing = self.conn.execute(sql).fetchall()
 
-        self.conn.execute(sql)
-        self.conn.commit()
+        if len(existing) > 1:           # CASE multiple labels for one object? This is an error!
+            assert False, "ERROR: Multiple labels for this object!"
+        elif len(existing) == 1:        # CASE label already here? Update this label with a new class.
+            id = existing[0][0]
+            sql = "update labels set class={} where id={}".format(c, id)
+            self.conn.execute(sql)
+            self.conn.commit()
 
-        print("Added record: l={} d={} c={} v={} f={} cls={} x1={} y1={} x2={} y2={}".format(
-            location, import_dt, cam, vid, frame, c, start_x, start_y, end_x, end_y)
-        )
+            print("Updated record {} with class {}".format(id, c))
+        else:                           # CASE no label existing? Create entirely new label!
+            sql = """insert into labels (location, import_dt, cam, vid, frame, class, start_x, start_y, end_x, end_y) 
+                    values ({}, '{}', {}, {}, {}, {}, {}, {}, {}, {});""".format(
+                location, import_dt, cam, vid, frame, c, start_x, start_y, end_x, end_y
+            )
+
+            self.conn.execute(sql)
+            self.conn.commit()
+
+            print("Added record: l={} d={} c={} v={} f={} cls={} x1={} y1={} x2={} y2={}".format(
+                location, import_dt, cam, vid, frame, c, start_x, start_y, end_x, end_y)
+            )
 
     def retrieve_labels(self, location, import_dt, cam, vid, frame):
         sql = """select class, start_x, start_y, end_x, end_y from labels 
