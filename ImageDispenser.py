@@ -1,12 +1,14 @@
 from common import get_files_in_folder, num_frames, get_frame
 import cv2
-from random import shuffle
+from random import shuffle, seed
 from enums import *
 
 class ImageDispenser:
     def __init__(self, input_folder):
         self.file_paths = get_files_in_folder(input_folder)
         self.num_frames = []
+
+        seed(0)
 
         # delete non-avi files
         i = 0
@@ -44,7 +46,15 @@ class ImageDispenser:
         frame = self.get_frame(frame_index)
         frame = cv2.resize(frame, None, fx=0.5, fy=0.5)
 
-        return frame
+        return frame[:,:,[2, 1, 0]]
+
+    def dispense_video(self):
+        index = self.sequence[self.current_index]
+
+        vid, frame = self.index_to_vid_frame[index]     # convert index to a video # and frame #
+        cap = cv2.VideoCapture(self.file_paths[vid])    # open video capture
+
+        return cap
 
     def frame_info(self):
         frame_index = self.sequence[self.current_index]
