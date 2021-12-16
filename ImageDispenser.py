@@ -69,6 +69,9 @@ class ImageDispenser:
 
         return location, date, cam, vid, frame
 
+    def video_path(self):
+        return self.file_paths[self.index_to_vid_frame[self.sequence[self.current_index]][0]]
+
     def next(self):
         self.current_index = min(self.current_index + 1, len(self.sequence) - 1)
 
