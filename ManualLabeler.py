@@ -20,6 +20,9 @@ class ManualLabeler:
         # set up buttons
         self.prev_btn = Button(window, text="Prev", command=self.prev_btn_press)
         self.prev_btn.grid(row=1, column=0)
+        self.confirm_btn = Checkbutton(window, text="Confirm", command=self.confirm_btn_press)
+        self.confirm_btn.grid(row=1, column=3)
+        self.confirm_btn_state = LABEL_STATUS_UNLABELED
         self.next_btn = Button(window, text="Next", command=self.next_btn_press)
         self.next_btn.grid(row=1, column=4)
 
@@ -74,6 +77,11 @@ class ManualLabeler:
 
         if len(self.rects) > 0: self.rects[0].select()    # ensure *something* is selected
 
+        # load checkmark state
+        self.confirm_btn_state = self.dataset_manager.retrieve_frame_state(location, date, cam, vid, frame)
+        if self.confirm_btn_state == LABEL_STATUS_UNLABELED: self.confirm_btn.deselect()
+        elif self.confirm_btn_state == LABEL_STATUS_LABELED: self.confirm_btn.select()
+
     def next_btn_press(self):
         self.dispenser.next()
         self.set_image(self.dispenser.dispense())
@@ -83,6 +91,15 @@ class ManualLabeler:
         self.dispenser.prev()
         self.set_image(self.dispenser.dispense())
         self.load_frame()
+
+    def confirm_btn_press(self):
+        new_state = None
+
+        if self.confirm_btn_state == LABEL_STATUS_UNLABELED: new_state = LABEL_STATUS_LABELED
+        elif self.confirm_btn_state == LABEL_STATUS_LABELED: new_state = LABEL_STATUS_UNLABELED
+
+        location, date, cam, vid, frame = self.dispenser.frame_info()
+        self.dataset_manager.update_frame_state(location, date, cam, vid, frame, new_state)
 
     def between(self, X, a, b):
         lo = min(a,b)

@@ -3,6 +3,7 @@ Purpose of this class is to interface with the SQL database where our labels are
 """
 
 from sqlite3 import connect, Error
+from enums import *
 
 class DatasetManager:
     def __init__(self, db_name):
@@ -49,6 +50,38 @@ class DatasetManager:
         )
 
         return self.conn.execute(sql).fetchall()
+
+    def retrieve_frame_state(self, location, import_dt, cam, vid, frame):
+        sql = "select is_labeled from frame_status where " \
+              "location={} and import_dt='{}' and cam={} and vid={} and frame={}".format(
+            location, import_dt, cam, vid, frame
+        )
+
+        self.conn.execute(sql)
+        res = self.conn.execute(sql).fetchall()
+
+        if len(res) == 1: return res[0][0]
+        elif len(res) > 1:
+            assert False, "Found more than 1 record for : {}".format(sql)
+        elif len(res) == 0:
+            sql = """insert into frame_status (location, import_dt, cam, vid, frame, is_labeled)
+                    values ({}, '{}', {}, {}, {}, {})""".format(
+                location, import_dt, cam, vid, frame, LABEL_STATUS_UNLABELED
+            )
+
+            self.conn.execute(sql)
+            self.conn.commit()
+
+            return LABEL_STATUS_UNLABELED
+
+    def update_frame_state(self, location, import_dt, cam, vid, frame, new_label):
+        sql = """update frame_status set is_labeled={} where 
+        location={} and import_dt='{}' and cam={} and vid={} and frame={};""".format(
+            new_label, location, import_dt, cam, vid, frame
+        )
+
+        self.conn.execute(sql)
+        self.conn.commit()
 
     def create_connection(self, db_file):
         """ create a database connection to the SQLite database
