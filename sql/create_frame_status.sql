@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS labels (
+CREATE TABLE IF NOT EXISTS frame_status (
         id integer primary key,
         location integer,
         import_dt text,
