@@ -23,6 +23,8 @@ class ManualLabeler:
         self.confirm_btn = Checkbutton(window, text="Confirm", command=self.confirm_btn_press)
         self.confirm_btn.grid(row=1, column=3)
         self.confirm_btn_state = LABEL_STATUS_UNLABELED
+        self.play_btn = Button(window, text="Play", command=self.play_video)
+        self.play_btn.grid(row=1, column=2)
         self.next_btn = Button(window, text="Next", command=self.next_btn_press)
         self.next_btn.grid(row=1, column=4)
 
@@ -228,3 +230,8 @@ class ManualLabeler:
         self.dataset_manager.create_label(
             location, date, cam, vid, frame, NUM_SQUIRREL, start_x, start_y, end_x, end_y
         )
+
+    def play_video(self):
+        print("Play button pressed.")
+        cap = self.dispenser.dispense_video()
+        print("Recieved video capture.")
