@@ -11,7 +11,6 @@ class VideoPlayer:
         self.size = size
 
         self.cap = cap
-        self.cap_frame = 0
         self.cap_lock = Lock()
 
         self.label_lock = Lock()
