@@ -19,6 +19,13 @@ class VideoPlayer:
         self.frame_step = 2
         self.worker_ct = workers
 
+    def set_path(self, path):
+        self.path = path
+
+    def reset(self):
+        self.frame_buffer = 0
+        self.vid_lbl_frame = 0
+
     def play(self):
         self.start_time = time()
 
@@ -65,4 +72,3 @@ class VideoPlayer:
                     self.vid_lbl_frame += self.frame_step
                     self.vid_lbl_lock.release()
                     break
-
