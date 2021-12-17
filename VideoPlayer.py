@@ -16,7 +16,7 @@ class VideoPlayer:
         self.frame_buffer = 0
         self.buffer_lock = Lock()
 
-        self.frame_step = 2
+        self.frame_step = 1
         self.worker_ct = workers
 
     def set_path(self, path):
@@ -26,22 +26,30 @@ class VideoPlayer:
         self.frame_buffer = 0
         self.vid_lbl_frame = 0
 
-    def play(self):
+    def play(self, start=-1, stop = 999999):
         self.start_time = time()
 
+        if start >= 0:
+            self.frame_buffer = start
+            self.vid_lbl_frame = start
+
         for i in range(self.worker_ct):
-            thread = Thread(target=self.frame_worker)
+            thread = Thread(target=self.frame_worker, args=(start, stop,))
             thread.daemon = 1
             thread.start()
 
-    def frame_worker(self):
+    def frame_worker(self, start, stop):
         cap = cv2.VideoCapture(self.path)
         frame_ct = num_frames(cap)
+
+        if stop > frame_ct: stop = frame_ct
+
+        start, stop = max(0, start), min(frame_ct-1, stop)
 
         while True:
             # get the frame which needs loaded
             self.buffer_lock.acquire()
-            if self.frame_buffer >= frame_ct:
+            if self.frame_buffer >= stop:
                 self.buffer_lock.release()
                 print("Thread finished at {:.2f} seconds".format(time() - self.start_time))
                 break

@@ -242,4 +242,10 @@ class ManualLabeler:
 
     def play_btn_press(self):
         print("Play button pressed.")
-        self.vid_player.play()
+        location, date, cam, vid, frame = self.dispenser.frame_info()
+
+        frame_padding = 30
+        start = max(0, frame-frame_padding)
+        stop = frame + frame_padding
+
+        self.vid_player.play(start, stop)
