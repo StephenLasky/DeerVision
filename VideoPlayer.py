@@ -5,13 +5,13 @@ from common import num_frames
 import cv2
 
 class VideoPlayer:
-    def __init__(self, path, label, size = (960, 540), workers=8):
+    def __init__(self, path, vid_lbl, size = (960, 540), workers=8):
         self.size = size
         self.path = path
 
-        self.label_lock = Lock()
-        self.label_frame = 0
-        self.label = label
+        self.vid_lbl_lock = Lock()
+        self.vid_lbl_frame = 0
+        self.vid_lbl = vid_lbl
 
         self.frame_buffer = 0
         self.buffer_lock = Lock()
@@ -26,8 +26,6 @@ class VideoPlayer:
             thread = Thread(target=self.frame_worker)
             thread.daemon = 1
             thread.start()
-
-            self.threads.append(thread)
 
     def frame_worker(self):
         cap = cv2.VideoCapture(self.path)
@@ -56,15 +54,15 @@ class VideoPlayer:
             frame = ImageTk.PhotoImage(Image.fromarray(frame).resize(self.size))
 
             while True:
-                self.label_lock.acquire()
-                if frame_num != self.label_frame:
-                    self.label_lock.release()
+                self.vid_lbl_lock.acquire()
+                if frame_num != self.vid_lbl_frame:
+                    self.vid_lbl_lock.release()
                     sleep(0.005)
                     continue
                 else:
-                    self.label.config(image=frame)
-                    self.label.image = frame
-                    self.label_frame += self.frame_step
-                    self.label_lock.release()
+                    self.vid_lbl.config(image=frame)
+                    self.vid_lbl.image = frame
+                    self.vid_lbl_frame += self.frame_step
+                    self.vid_lbl_lock.release()
                     break
 
