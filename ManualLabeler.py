@@ -25,7 +25,9 @@ class ManualLabeler:
         self.confirm_btn.grid(row=1, column=3)
         self.confirm_btn_state = LABEL_STATUS_UNLABELED
         self.play_btn = Button(window, text="Play", command=self.play_btn_press)
-        self.play_btn.grid(row=1, column=2)
+        self.play_btn.grid(row=1, column=1)
+        self.play_clip_btn = Button(window, text="Play Clip", command=self.play_clip_btn_press)
+        self.play_clip_btn.grid(row=1, column=2)
         self.next_btn = Button(window, text="Next", command=self.next_btn_press)
         self.next_btn.grid(row=1, column=4)
 
@@ -240,12 +242,18 @@ class ManualLabeler:
             location, date, cam, vid, frame, NUM_SQUIRREL, start_x, start_y, end_x, end_y
         )
 
-    def play_btn_press(self):
-        print("Play button pressed.")
+    def play_clip_btn_press(self):
+        print("Play clip button pressed.")
         location, date, cam, vid, frame = self.dispenser.frame_info()
 
-        frame_padding = 30
+        frame_padding, step = 120, 1
         start = max(0, frame-frame_padding)
-        stop = frame + frame_padding
+        stop = frame
 
-        self.vid_player.play(start, stop)
+        self.vid_player.reset()
+        self.vid_player.play(start, stop, step)
+
+    def play_btn_press(self):
+        print("Play button pressed.")
+        self.vid_player.reset()
+        self.vid_player.play()

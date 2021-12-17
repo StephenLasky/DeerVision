@@ -60,3 +60,5 @@ LOCATION_TO_INT = {
 
 LABEL_STATUS_UNLABELED = 0
 LABEL_STATUS_LABELED = 1
+
+IMAGEIO_FFMPEG_EXE = "/opt/homebrew/Cellar/ffmpeg/4.4.1_3/bin/ffmpeg"

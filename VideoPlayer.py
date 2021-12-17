@@ -16,7 +16,7 @@ class VideoPlayer:
         self.frame_buffer = 0
         self.buffer_lock = Lock()
 
-        self.frame_step = 1
+        self.frame_step = 2
         self.worker_ct = workers
 
     def set_path(self, path):
@@ -26,8 +26,9 @@ class VideoPlayer:
         self.frame_buffer = 0
         self.vid_lbl_frame = 0
 
-    def play(self, start=-1, stop = 999999):
+    def play(self, start=-1, stop = 999999, step=2):
         self.start_time = time()
+        self.step = step
 
         if start >= 0:
             self.frame_buffer = start
