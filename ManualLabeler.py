@@ -91,8 +91,7 @@ class ManualLabeler:
         elif self.confirm_btn_state == LABEL_STATUS_LABELED: self.confirm_btn.select()
 
         # load video
-        self.vid_player.set_path(self.dispenser.video_path())
-        self.vid_player.reset()
+        self.vid_player = VideoPlayer(self.dispenser.video_path(), self.vid_lbl)
 
     def next_btn_press(self):
         self.dispenser.next()
@@ -243,8 +242,4 @@ class ManualLabeler:
 
     def play_btn_press(self):
         print("Play button pressed.")
-        cap = self.dispenser.dispense_video()
-        print("Recieved video capture.")
-
         self.vid_player.play()
-        self.vid_player.reset()
