@@ -143,3 +143,9 @@ class DatasetManager:
         ); """
 
         self.create_table(conn, sql)
+
+    def list_labeled_frames(self):
+        sql = """select location, import_dt, cam, vid, frame from frame_status where is_labeled=1
+                order by location, import_dt, cam, vid, frame"""
+
+        return self.conn.execute(sql).fetchall()

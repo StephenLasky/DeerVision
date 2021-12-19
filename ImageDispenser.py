@@ -4,7 +4,7 @@ from random import shuffle, seed
 from enums import *
 
 class ImageDispenser:
-    def __init__(self, input_folder):
+    def __init__(self, input_folder, exclusions = []):
         self.file_paths = get_files_in_folder(input_folder)
         self.num_frames = []
 
