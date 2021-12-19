@@ -69,6 +69,16 @@ class DatasetManager:
         return self.conn.execute(sql).fetchall()
 
     def retrieve_frame_state(self, location, import_dt, cam, vid, frame):
+        """
+        Retrieves the state of the frame from the DB. If no record is found, then it will create a generic record.
+        :param location: location where it was taken
+        :param import_dt: date which it was imported
+        :param cam: camera number
+        :param vid: video number
+        :param frame: frame number
+        :return: status - is_labeled
+        """
+
         sql = "select is_labeled from frame_status where " \
               "location={} and import_dt='{}' and cam={} and vid={} and frame={}".format(
             location, import_dt, cam, vid, frame
@@ -144,7 +154,7 @@ class DatasetManager:
 
         self.create_table(conn, sql)
 
-    def list_labeled_frames(self):
+    def get_labeled_frames(self):
         sql = """select location, import_dt, cam, vid, frame from frame_status where is_labeled=1
                 order by location, import_dt, cam, vid, frame"""
 

@@ -1,3 +1,4 @@
+import tkinter
 from tkinter import *
 from enums import *
 from PIL import Image, ImageTk
@@ -6,9 +7,9 @@ from DatasetManager import DatasetManager
 from VideoPlayer import VideoPlayer
 
 class ManualLabeler:
-    def __init__(self, dispenser):
+    def __init__(self, dispenser, dataset_manager):
         self.dispenser = dispenser
-        self.dataset_manager = DatasetManager(TEST_DB_NAME)
+        self.dataset_manager = dataset_manager
 
         window = Tk()
         window.title("Main window")
@@ -24,7 +25,7 @@ class ManualLabeler:
         self.confirm_btn = Checkbutton(window, text="Confirm", command=self.confirm_btn_press)
         self.confirm_btn.grid(row=1, column=3)
         self.confirm_btn_state = LABEL_STATUS_UNLABELED
-        self.play_btn = Button(window, text="Play", command=self.play_btn_press)
+        self.play_btn = Button(window, text="▶", command=self.play_btn_press)
         self.play_btn.grid(row=1, column=1)
         self.play_clip_btn = Button(window, text="Play Clip", command=self.play_clip_btn_press)
         self.play_clip_btn.grid(row=1, column=2)
@@ -49,8 +50,13 @@ class ManualLabeler:
         self.coyote_btn.grid(row=2, column=3)
         self.squirrel_btn.grid(row=2, column=4)
 
+        # mark entire video buttons
+        self.mark_full_vid = Button(window, text="Mark Entire Video", fg='red', command=self.mark_full_vid_press)
+        self.mark_full_vid.config(bg = 'red')
+        self.mark_full_vid.grid(row=3, column=4)
+
         # set initial image
-        self.set_image(dispenser.dispense())
+        self.set_image(self.dispenser.dispense())
         self.load_frame()
 
         # bound mouse movement to the canvas
@@ -257,3 +263,35 @@ class ManualLabeler:
         print("Play button pressed.")
         self.vid_player.reset()
         self.vid_player.play()
+
+    def disable_all_btns(self):
+        btns = [self.prev_btn, self.next_btn, self.play_btn, self.play_clip_btn, self.confirm_btn]
+        for btn in btns: btn['state'] = tkinter.DISABLED
+
+    def enable_all_btns(self):
+        btns = [self.prev_btn, self.next_btn, self.play_btn, self.play_clip_btn, self.confirm_btn]
+        for btn in btns: btn['state'] = tkinter.NORMAL
+
+    def mark_full_vid_press(self):
+        print("Mark full video button press!")
+
+        self.disable_all_btns()
+
+        # step 1: get number of frames
+        frame_ct = self.dispenser.get_vid_frame_ct()
+        location, date, cam, vid, current_frame = self.dispenser.frame_info()
+
+        for frame_num in range(frame_ct):
+            self.dataset_manager.retrieve_frame_state(location, date, cam, vid, frame_num) # ensures frame in DB
+
+            if current_frame == frame_num:
+                self.confirm_btn_press() # mocks confirm button press if current frame
+                self.confirm_btn.select()
+            else: self.dataset_manager.update_frame_state(location, date, cam, vid, frame_num, LABEL_STATUS_LABELED)
+
+        # update ImageDespenser exclusions
+        self.dispenser.set_exclusions(self.dataset_manager.get_labeled_frames())
+
+        print("Loc:{} date:{} cam:{} vid:{} -> {} frames marked!".format(location, date, cam, vid, frame_ct))
+
+        self.enable_all_btns()

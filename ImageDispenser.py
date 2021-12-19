@@ -8,6 +8,8 @@ class ImageDispenser:
         self.file_paths = get_files_in_folder(input_folder)
         self.num_frames = []
 
+        self.exclusions = exclusions
+
         seed(0)
 
         # delete non-avi files
@@ -31,7 +33,8 @@ class ImageDispenser:
 
         self.sequence = list(range(len(self.index_to_vid_frame)))
         shuffle(self.sequence)
-        self.current_index = 0
+        self.current_index = -1
+        self.next()
 
     def dispense(self):
         frame_index = self.sequence[self.current_index]
@@ -56,8 +59,10 @@ class ImageDispenser:
 
         return cap
 
-    def frame_info(self):
-        frame_index = self.sequence[self.current_index]
+    def frame_info(self, index=None):
+        if index is None: index = self.current_index
+
+        frame_index = self.sequence[index]
         frame = self.index_to_vid_frame[frame_index][1]
         path = self.file_paths[self.index_to_vid_frame[frame_index][0]]
 
@@ -75,11 +80,39 @@ class ImageDispenser:
     def next(self):
         self.current_index = min(self.current_index + 1, len(self.sequence) - 1)
 
+        # skip frames that have already been labeled here
+        if self.is_labeled(self.current_index) and self.current_index < len(self.sequence): self.next()
+
     def prev(self):
         self.current_index = max(self.current_index - 1, 0)
+
+        if self.is_labeled(self.current_index) and self.current_index > 0: self.prev()
 
     def get_frame(self, index):
         vid, frame = self.index_to_vid_frame[index]     # convert index to a video # and frame #
         cap = cv2.VideoCapture(self.file_paths[vid])    # open video capture
 
         return get_frame(cap, frame)                    # open numpy array from common library
+
+    def is_labeled(self, index):
+        location, date, cam, vid, frame = self.frame_info(index)    # todo: optimize this!
+
+        for i in range(len(self.exclusions)):
+            if (location, date, cam, vid ,frame) == self.exclusions[i]:
+                return True
+
+        return False
+
+    def get_vid_frame_ct(self, index=None):
+        if index is None: index = self.current_index
+
+        vid, frame = self.index_to_vid_frame[index]     # convert index to a video # and frame #
+        cap = cv2.VideoCapture(self.file_paths[vid])    # open video capture
+
+        return num_frames(cap)
+
+    def set_exclusions(self, exclusions):
+        old_ct = len(self.exclusions)
+        self.exclusions = exclusions
+
+        print("Exclusions updated from {}->{}".format(old_ct, len(self.exclusions)))
