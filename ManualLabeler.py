@@ -69,6 +69,13 @@ class ManualLabeler:
         self.drag_mode = None
         self.drag_side = None
 
+        # bind key presses
+        window.bind("<space>", self.play_btn_press)
+        window.bind("<Left>", self.prev_btn_press)
+        window.bind("<Right>", self.next_btn_press)
+        window.bind("<m>", self.mark_full_vid_press)
+        window.bind("<c>", self.confirm_btn_press)
+
         window.mainloop()
 
     def set_image(self, np_array):
@@ -101,17 +108,17 @@ class ManualLabeler:
         # load video
         self.vid_player = VideoPlayer(self.dispenser.video_path(), self.vid_lbl)
 
-    def next_btn_press(self):
+    def next_btn_press(self, event=None):
         self.dispenser.next()
         self.set_image(self.dispenser.dispense())
         self.load_frame()
 
-    def prev_btn_press(self):
+    def prev_btn_press(self, event=None):
         self.dispenser.prev()
         self.set_image(self.dispenser.dispense())
         self.load_frame()
 
-    def confirm_btn_press(self):
+    def confirm_btn_press(self, event=None):
         new_state = None
 
         if self.confirm_btn_state == LABEL_STATUS_UNLABELED: new_state = LABEL_STATUS_LABELED
@@ -259,7 +266,7 @@ class ManualLabeler:
         self.vid_player.reset()
         self.vid_player.play(start, stop, step)
 
-    def play_btn_press(self):
+    def play_btn_press(self, event=None):
         print("Play button pressed.")
         self.vid_player.reset()
         self.vid_player.play()
@@ -272,7 +279,7 @@ class ManualLabeler:
         btns = [self.prev_btn, self.next_btn, self.play_btn, self.play_clip_btn, self.confirm_btn]
         for btn in btns: btn['state'] = tkinter.NORMAL
 
-    def mark_full_vid_press(self):
+    def mark_full_vid_press(self, event=None):
         print("Mark full video button press!")
 
         self.disable_all_btns()
