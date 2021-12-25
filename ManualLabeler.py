@@ -16,7 +16,7 @@ class ManualLabeler:
         window.config(background='gray')
 
         # set up main canvas
-        self.canvas = Canvas(window, height=1080/2, width=1920/2)
+        self.canvas = Canvas(window, height=SCALED_IMAGE_HEIGHT, width=SCALED_IMAGE_WIDTH)
         self.canvas.grid(row=0, column=0, columnspan=5)
 
         # set up buttons

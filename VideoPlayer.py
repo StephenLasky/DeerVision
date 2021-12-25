@@ -3,9 +3,10 @@ from PIL import Image, ImageTk
 from time import sleep, time
 from common import num_frames
 import cv2
+from enums import *
 
 class VideoPlayer:
-    def __init__(self, path, vid_lbl, size = (960, 540), workers=8):
+    def __init__(self, path, vid_lbl, size = (SCALED_IMAGE_WIDTH, SCALED_IMAGE_HEIGHT), workers=8):
         self.size = size
         self.path = path
 

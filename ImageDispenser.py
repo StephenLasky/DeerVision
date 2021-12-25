@@ -79,6 +79,7 @@ class ImageDispenser:
 
     def next(self):
         self.current_index = min(self.current_index + 1, len(self.sequence) - 1)
+        print("Now on {}".format(self.frame_info()))
 
         # skip frames that have already been labeled here
         if self.is_labeled(self.current_index) and self.current_index < len(self.sequence): self.next()
