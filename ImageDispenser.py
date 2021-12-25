@@ -1,4 +1,4 @@
-from common import get_files_in_folder, num_frames, get_frame
+from common import get_files_in_folder, num_frames, get_frame, does_frame_exist
 import cv2
 from random import shuffle, seed
 from enums import *
@@ -47,7 +47,7 @@ class ImageDispenser:
         ))
 
         frame = self.get_frame(frame_index)
-        frame = cv2.resize(frame, None, fx=0.5, fy=0.5)
+        frame = cv2.resize(frame, None, fx=IMAGE_SCALE_FACTOR, fy=IMAGE_SCALE_FACTOR)
 
         return frame[:,:,[2, 1, 0]]
 
@@ -83,13 +83,26 @@ class ImageDispenser:
 
         # skip frames that have already been labeled here
         if self.is_labeled(self.current_index) and self.current_index < len(self.sequence): self.next()
+        if self.does_frame_exist() == False:
+            print("WARNING: DEAD FRAME!")
+            self.next()    # skip 'dead' frames
 
     def prev(self):
         self.current_index = max(self.current_index - 1, 0)
 
         if self.is_labeled(self.current_index) and self.current_index > 0: self.prev()
+        if self.does_frame_exist() == False:
+            print("WARNING: DEAD FRAME!")
+            self.prev()    # skip 'dead' frames
 
-    def get_frame(self, index):
+    def does_frame_exist(self):
+        frame = self.get_frame()
+
+        if type(frame) == type(None): return False
+        else: return True
+
+    def get_frame(self, index=None):
+        if index is None: index = self.sequence[self.current_index]
         vid, frame = self.index_to_vid_frame[index]     # convert index to a video # and frame #
         cap = cv2.VideoCapture(self.file_paths[vid])    # open video capture
 
