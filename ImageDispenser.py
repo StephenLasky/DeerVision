@@ -1,4 +1,4 @@
-from common import get_files_in_folder, num_frames, get_frame, does_frame_exist
+from common import get_files_in_folder, num_frames, get_frame
 import cv2
 from random import shuffle, seed
 from enums import *
