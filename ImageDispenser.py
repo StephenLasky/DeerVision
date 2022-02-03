@@ -82,7 +82,7 @@ class ImageDispenser:
         print("Now on {}".format(self.frame_info()))
 
         # skip frames that have already been labeled here
-        if self.is_labeled(self.current_index) and self.current_index < len(self.sequence): self.next()
+        if self.is_excluded(self.current_index) and self.current_index < len(self.sequence): self.next()
         if self.does_frame_exist() == False:
             print("WARNING: DEAD FRAME!")
             self.next()    # skip 'dead' frames
@@ -90,7 +90,7 @@ class ImageDispenser:
     def prev(self):
         self.current_index = max(self.current_index - 1, 0)
 
-        if self.is_labeled(self.current_index) and self.current_index > 0: self.prev()
+        if self.is_excluded(self.current_index) and self.current_index > 0: self.prev()
         if self.does_frame_exist() == False:
             print("WARNING: DEAD FRAME!")
             self.prev()    # skip 'dead' frames
@@ -108,7 +108,7 @@ class ImageDispenser:
 
         return get_frame(cap, frame)                    # open numpy array from common library
 
-    def is_labeled(self, index):
+    def is_excluded(self, index):
         location, date, cam, vid, frame = self.frame_info(index)    # todo: optimize this!
 
         for i in range(len(self.exclusions)):
