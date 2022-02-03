@@ -155,7 +155,23 @@ class DatasetManager:
         self.create_table(conn, sql)
 
     def get_labeled_frames(self):
+        """
+        Will get a list of frames that have been labeled.
+        However, a label could include nothing being in that frame at all.
+        :return: list of frames that have a label
+        """
+
         sql = """select location, import_dt, cam, vid, frame from frame_status where is_labeled=1
                 order by location, import_dt, cam, vid, frame"""
+
+        return self.conn.execute(sql).fetchall()
+
+    def get_frames_with_objects(self):
+        """
+        Purpose of this is to get a list of frames that have an object as being labeled inside of them
+        :return: List of frames with an object inside of them
+        """
+
+        sql = "select distinct import_dt, cam, vid, frame from labels"
 
         return self.conn.execute(sql).fetchall()
