@@ -172,6 +172,6 @@ class DatasetManager:
         :return: List of frames with an object inside of them
         """
 
-        sql = "select distinct import_dt, cam, vid, frame from labels"
+        sql = "select distinct location, import_dt, cam, vid, frame from labels"
 
         return self.conn.execute(sql).fetchall()

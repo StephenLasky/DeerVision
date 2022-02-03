@@ -85,15 +85,21 @@ class ImageDispenser:
         print("Now on {}".format(self.frame_info()))
 
         # when we are operating in 'only mode', skip frames that are not found in the 'only' section
-        if len(self.only) > 0:
-            if not self.in_only(self.current_index):
-                self.next()
+        if len(self.only) > 0 and self.current_index < len(self.sequence):
+            while not self.in_only(self.current_index):
+                last_idx = self.current_index
+                self.current_index = min(self.current_index + 1, len(self.sequence) - 1)
+
+                if last_idx == self.current_index:
+                    assert False, "Infinite loop!"
+                print(self.current_index)
 
         # skip frames that have already been labeled here
-        if self.is_excluded(self.current_index) and self.current_index < len(self.sequence):
+        while self.is_excluded(self.current_index) and self.current_index < len(self.sequence):
             print("Skipping ...")
-            self.next()
-        elif self.does_frame_exist() == False:
+            self.current_index = min(self.current_index + 1, len(self.sequence) - 1)
+
+        if self.does_frame_exist() == False:
             print("WARNING: DEAD FRAME!")
             self.next()    # skip 'dead' frames
 
@@ -102,13 +108,14 @@ class ImageDispenser:
 
         # when we are operating in 'only mode', skip frames that are not found in the 'only' section
         if len(self.only) > 0:
-            if not self.in_only(self.current_index):
+            while not self.in_only(self.current_index):
                 self.prev()
 
-        if self.is_excluded(self.current_index) and self.current_index > 0:
+        while self.is_excluded(self.current_index) and self.current_index > 0:
             print("Skipping ...")
             self.prev()
-        elif self.does_frame_exist() == False:
+
+        if self.does_frame_exist() == False:
             print("WARNING: DEAD FRAME!")
             self.prev()    # skip 'dead' frames
 
