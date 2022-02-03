@@ -85,7 +85,7 @@ class ImageDispenser:
         if self.is_excluded(self.current_index) and self.current_index < len(self.sequence):
             print("Skipping ...")
             self.next()
-        if self.does_frame_exist() == False:
+        elif self.does_frame_exist() == False:
             print("WARNING: DEAD FRAME!")
             self.next()    # skip 'dead' frames
 
@@ -95,7 +95,7 @@ class ImageDispenser:
         if self.is_excluded(self.current_index) and self.current_index > 0:
             print("Skipping ...")
             self.prev()
-        if self.does_frame_exist() == False:
+        elif self.does_frame_exist() == False:
             print("WARNING: DEAD FRAME!")
             self.prev()    # skip 'dead' frames
 
