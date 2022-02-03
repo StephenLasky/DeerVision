@@ -7,8 +7,10 @@ class ImageDispenser:
     def __init__(self, input_folder, exclusions = []):
         self.file_paths = get_files_in_folder(input_folder)
         self.num_frames = []
-
         self.exclusions = exclusions
+        self.index_to_vid_frame = []
+        self.sequence = None
+        self.current_index = None
 
         seed(0)
 
@@ -20,8 +22,6 @@ class ImageDispenser:
             else: i += 1
 
         print("ID: Found {} videos!".format(len(self.file_paths)))
-
-        self.index_to_vid_frame = []
 
         for i in range(len(self.file_paths)):
             fp = self.file_paths[i]
