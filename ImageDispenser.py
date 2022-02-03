@@ -4,13 +4,16 @@ from random import shuffle, seed
 from enums import *
 
 class ImageDispenser:
-    def __init__(self, input_folder, exclusions = []):
+    def __init__(self, input_folder, exclusions = [], only = []):
         self.file_paths = get_files_in_folder(input_folder)
         self.num_frames = []
         self.exclusions = exclusions
+        self.only = only
         self.index_to_vid_frame = []
         self.sequence = None
         self.current_index = None
+
+        assert not (len(exclusions) > 0 and len(only) > 0), "Cannot use exclude and only at the same time!"
 
         seed(0)
 
@@ -81,6 +84,11 @@ class ImageDispenser:
         self.current_index = min(self.current_index + 1, len(self.sequence) - 1)
         print("Now on {}".format(self.frame_info()))
 
+        # when we are operating in 'only mode', skip frames that are not found in the 'only' section
+        if len(self.only) > 0:
+            if not self.in_only(self.current_index):
+                self.next()
+
         # skip frames that have already been labeled here
         if self.is_excluded(self.current_index) and self.current_index < len(self.sequence):
             print("Skipping ...")
@@ -91,6 +99,11 @@ class ImageDispenser:
 
     def prev(self):
         self.current_index = max(self.current_index - 1, 0)
+
+        # when we are operating in 'only mode', skip frames that are not found in the 'only' section
+        if len(self.only) > 0:
+            if not self.in_only(self.current_index):
+                self.prev()
 
         if self.is_excluded(self.current_index) and self.current_index > 0:
             print("Skipping ...")
@@ -113,10 +126,21 @@ class ImageDispenser:
         return get_frame(cap, frame)                    # open numpy array from common library
 
     def is_excluded(self, index):
+        if len(self.exclusions) == 0: return False
+
         location, date, cam, vid, frame = self.frame_info(index)    # todo: optimize this!
 
         for i in range(len(self.exclusions)):
             if (location, date, cam, vid ,frame) == self.exclusions[i]:
+                return True
+
+        return False
+
+    def in_only(self, index):
+        location, date, cam, vid, frame = self.frame_info(index)
+
+        for i in range(len(self.only)):
+            if (location, date, cam, vid ,frame) == self.only[i]:
                 return True
 
         return False
