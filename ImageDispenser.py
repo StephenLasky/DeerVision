@@ -69,7 +69,8 @@ class ImageDispenser:
         frame = self.index_to_vid_frame[frame_index][1]
         path = self.file_paths[self.index_to_vid_frame[frame_index][0]]
 
-        _, location, date, cam, vid = path.split("/")
+        x = path.split("/")
+        location, date, cam, vid = x[-4], x[-3], x[-2], x[-1]
 
         location = LOCATION_TO_INT[location]
         cam = int(cam.split("_")[-1])
